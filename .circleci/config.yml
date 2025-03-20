@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.9  # Imagen de CircleCI con Python 3.9
+    steps:
+      - checkout  # Descargar el código del repositorio
+
+      - run:
+          name: Instalar dependencias del sistema
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y wget unzip
+
+      - run:
+          name: Instalar Chrome
+          command: |
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+
+      - run:
+          name: Instalar ChromeDriver
+          command: |
+            CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
+            CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
+            wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip
+            sudo unzip -o /tmp/chromedriver.zip -d /usr/local/bin
+            sudo chmod +x /usr/local/bin/chromedriver
+
+      - run:
+          name: Instalar dependencias de Python
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - run:
+          name: Ejecutar pruebas
+          command: |
+            . venv/bin/activate
+            pytest tests/ --html=reports/report.html --self-contained-html
+
+      - store_artifacts:
+          path: reports/report.html  # Guardar el reporte de pruebas como artefacto
+
+      - store_artifacts:
+          path: screenshots/  # Guardar las capturas de pantalla como artefacto
