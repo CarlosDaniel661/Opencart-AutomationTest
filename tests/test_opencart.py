@@ -22,7 +22,7 @@ def test_opencart_flow(driver):
 
     print(f"Directorio actual: {os.getcwd()}")
 
-    # Consigna 1: Abrir la página de OpenCart
+    # Consigna 1: Abrir la página de OpenCart.
     screenshot_path = os.path.join(screenshots_folder, "captura1_home_page.png")
     print(f"Guardando captura en: {screenshot_path}")
     driver.save_screenshot(screenshot_path)
