@@ -3,9 +3,9 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import tempfile
-import platform
-import shutil
 import os
+import shutil
+import stat
 
 def get_driver():
     options = Options()
@@ -26,6 +26,11 @@ def get_driver():
     chromedriver_path = ChromeDriverManager().install()
     print(f"ChromeDriver descargado en: {chromedriver_path}")  # Imprimir la ruta
 
+    # Verificar que el archivo descargado sea el binario de ChromeDriver
+    if not chromedriver_path.endswith("chromedriver"):
+        raise Exception(f"El archivo descargado no es el binario de ChromeDriver: {chromedriver_path}")
+
+    # Dar permisos de ejecución al ChromeDriver
     os.chmod(chromedriver_path, stat.S_IRWXU)
     print(f"Permisos de ejecución dados a: {chromedriver_path}")
 
