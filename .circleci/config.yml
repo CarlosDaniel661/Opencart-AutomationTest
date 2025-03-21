@@ -29,12 +29,6 @@ jobs:
             pip install -r requirements.txt
 
       - run:
-          name: Instalar ChromeDriver con webdriver-manager
-          command: |
-            . venv/bin/activate
-            python -c "from webdriver_manager.chrome import ChromeDriverManager; ChromeDriverManager().install()"
-
-      - run:
           name: Ejecutar pruebas
           command: |
             . venv/bin/activate
