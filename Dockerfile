@@ -1,4 +1,4 @@
-# Usar una imagen base con Python y Chrome preinstalados
+# Usar una imagen base con Chrome y ChromeDriver preinstalados
 FROM selenium/standalone-chrome:latest
 
 # Establecer el directorio de trabajo
@@ -7,19 +7,20 @@ WORKDIR /app
 # Copiar los archivos del proyecto al contenedor
 COPY . .
 
-# Instalar python3-venv
+# Instalar python3-venv y dependencias del sistema
 RUN sudo apt-get update && \
     sudo apt-get install -y python3-venv
 
 # Crear un entorno virtual en /home/seluser/venv
 RUN python3 -m venv /home/seluser/venv
 
-# Activar el entorno virtual e instalar las dependencias
+# Activar el entorno virtual e instalar las dependencias de Python
 RUN . /home/seluser/venv/bin/activate && \
     pip install --no-cache-dir -r requirements.txt
 
 # Crear la carpeta reports en /home/seluser/reports
 RUN mkdir -p /home/seluser/reports && \
+    chown seluser:seluser /home/seluser/reports && \
     chmod -R 777 /home/seluser/reports
 
 # Comando por defecto para ejecutar las pruebas
