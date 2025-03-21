@@ -21,7 +21,7 @@ jobs:
             docker run --rm automation-opencart
 
       - store_artifacts:
-          path: reports/report.html  # Guardar el reporte de pruebas como artefacto
+          path: /home/seluser/reports/report.html  # Guardar el reporte de pruebas como artefacto
 
       - store_artifacts:
-          path: screenshots/  # Guardar las capturas de pantalla como artefacto
+          path: /home/seluser/reports/screenshots  # Guardar las capturas de pantalla como artefacto

@@ -18,9 +18,9 @@ RUN python3 -m venv /home/seluser/venv
 RUN . /home/seluser/venv/bin/activate && \
     pip install --no-cache-dir -r requirements.txt
 
-# Crear la carpeta reports y asignar permisos
-RUN mkdir -p /app/reports && \
-    chmod -R 777 /app/reports
+# Crear la carpeta reports en /home/seluser/reports
+RUN mkdir -p /home/seluser/reports && \
+    chmod -R 777 /home/seluser/reports
 
 # Comando por defecto para ejecutar las pruebas
-CMD ["/home/seluser/venv/bin/pytest", "tests/", "--html=reports/report.html", "--self-contained-html"]
+CMD ["/home/seluser/venv/bin/pytest", "tests/", "--html=/home/seluser/reports/report.html", "--self-contained-html"]
