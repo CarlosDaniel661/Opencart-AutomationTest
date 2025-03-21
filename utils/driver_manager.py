@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+import tempfile
 
 def get_driver():
     options = Options()
@@ -10,8 +12,12 @@ def get_driver():
     options.add_argument("--allow-insecure-localhost")
     options.add_argument("--remote-debugging-port=9222")
 
-    # Usar ChromeDriver preinstalado en la imagen de Docker
-    service = Service("/usr/local/bin/chromedriver")
+    # Crear un directorio temporal único para los datos del usuario
+    user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={user_data_dir}")
+
+    # Usar WebDriver Manager para manejar ChromeDriver
+    service = Service(ChromeDriverManager().install())
 
     # Crear la instancia del driver
     driver = webdriver.Chrome(service=service, options=options)
