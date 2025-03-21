@@ -3,9 +3,12 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: selenium/standalone-chrome:latest
+      - image: cimg/base:stable  # Imagen base con Docker instalado
     steps:
       - checkout  # Descargar el código del repositorio
+
+      - setup_remote_docker:  # Configurar Docker en el entorno de CircleCI
+          docker_layer_caching: true
 
       - run:
           name: Construir la imagen de Docker
