@@ -22,20 +22,17 @@ jobs:
             sudo apt-get install -y google-chrome-stable
 
       - run:
-          name: Instalar ChromeDriver
-          command: |
-            CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
-            CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION})
-            wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip
-            sudo unzip -o /tmp/chromedriver.zip -d /usr/local/bin
-            sudo chmod +x /usr/local/bin/chromedriver
-
-      - run:
           name: Instalar dependencias de Python
           command: |
             python -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
+
+      - run:
+          name: Instalar ChromeDriver con webdriver-manager
+          command: |
+            . venv/bin/activate
+            python -c "from webdriver_manager.chrome import ChromeDriverManager; ChromeDriverManager().install()"
 
       - run:
           name: Ejecutar pruebas
