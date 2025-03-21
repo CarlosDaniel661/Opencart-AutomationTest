@@ -8,14 +8,14 @@ jobs:
       - checkout  # Descargar el código del repositorio
 
       - run:
-          name: Instalar dependencias de Python
+          name: Construir la imagen de Docker
           command: |
-            pip install --no-cache-dir -r requirements.txt
+            docker build -t automation-opencart .
 
       - run:
           name: Ejecutar pruebas
           command: |
-            pytest tests/ --html=reports/report.html --self-contained-html
+            docker run --rm automation-opencart
 
       - store_artifacts:
           path: reports/report.html  # Guardar el reporte de pruebas como artefacto
