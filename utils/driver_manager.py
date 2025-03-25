@@ -14,29 +14,26 @@ def get_driver():
     options.add_argument("--allow-insecure-localhost")
     options.add_argument("--remote-debugging-port=9222")
 
+    # Detección de entorno CI (SOLO para CircleCI)
+    is_circleci = os.environ.get('CIRCLECI') == 'true'
 
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-
-    if platform.system() == 'Linux':
-        chromedriver_path = "/usr/bin/chromedriver"
-    elif platform.system() == 'Windows':
-        chromedriver_path = ChromeDriverManager().install()
-       
-        if not chromedriver_path.endswith("chromedriver.exe"):
-            chromedriver_path = os.path.join(os.path.dirname(chromedriver_path), "chromedriver.exe")
+    if is_circleci:
+        # Configuración EXCLUSIVA para CircleCI
+        chromedriver_path = "/usr/local/bin/chromedriver"
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
     else:
-        raise Exception("Sistema operativo no soportado para WebDriver")
-
-    if not os.path.isfile(chromedriver_path):
-        raise Exception(f"Chromedriver no se ha encontrado en la ruta especificada: {chromedriver_path}")
+        # Configuración ORIGINAL para local
+        user_data_dir = tempfile.mkdtemp()
+        options.add_argument(f"--user-data-dir={user_data_dir}")
+        chromedriver_path = ChromeDriverManager().install()
+        
+        if platform.system() == 'Windows' and not chromedriver_path.endswith(".exe"):
+            chromedriver_path = os.path.join(os.path.dirname(chromedriver_path), "chromedriver.exe")
 
     print(f"Using ChromeDriver at path: {chromedriver_path}")
 
     service = Service(chromedriver_path)
-
     driver = webdriver.Chrome(service=service, options=options)
-
     driver.maximize_window()
-
     return driver

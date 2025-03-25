@@ -3,25 +3,23 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/base:stable  # Imagen base con Docker instalado
+      - image: cimg/python:3.12.4-browsers  # Imagen con Chrome preinstalado
+    environment:
+      CIRCLECI: "true"  # Activamos la detección de CI
     steps:
-      - checkout  # Descargar el código del repositorio
-
-      - setup_remote_docker:  # Configurar Docker en el entorno de CircleCI
-          docker_layer_caching: true
-
+      - checkout
       - run:
-          name: Construir la imagen de Docker
+          name: Instalar dependencias
           command: |
-            docker build -t automation-opencart .
-
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install webdriver-manager==3.8.6  # Versión compatible
       - run:
           name: Ejecutar pruebas
           command: |
-            docker run --rm automation-opencart
-
+            mkdir -p reports screenshots
+            pytest tests/ --html=reports/report.html --self-contained-html
       - store_artifacts:
-          path: /home/seluser/reports/report.html  # Guardar el reporte de pruebas como artefacto
-
+          path: reports
       - store_artifacts:
-          path: /home/seluser/reports/screenshots  # Guardar las capturas de pantalla como artefacto
+          path: screenshots
